@@ -41,4 +41,4 @@
 	@author Thomas Becker
 '
 
-nvcc -ccbin clang-3.8 Matrix.cu -o Matrix.ptx -ptx -std=c++11;
+nvcc -ccbin clang-3.8 src/Matrix.cu -o Matrix.ptx -ptx -std=c++11;

@@ -40,5 +40,5 @@
 '
 
 
-nvcc -ccbin clang-3.8  Matrix.cu -o Matrix.out -std=c++11;
+nvcc -ccbin clang-3.8  src/Matrix.cu -o determineStructSizes.out -std=c++11;
 

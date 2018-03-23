@@ -41,5 +41,5 @@
 	@author Thomas Becker
 '
 
-nvcc Matrix.cu -o Matrix.ptx -ptx -std=c++11;
+nvcc src/Matrix.cu -o Matrix.ptx -ptx -std=c++11;
 

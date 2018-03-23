@@ -39,5 +39,5 @@
 	This file builds an executable that contains the CUDA code for the POFToolBox in order to determine that structsizes.
 '
 
-nvcc Matrix.cu -o determineStructSizes.out -std=c++11;
+nvcc src/Matrix.cu -o determineStructSizes.out -std=c++11;
 

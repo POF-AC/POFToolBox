@@ -46,6 +46,8 @@ The model requiers scatter data in order to operate. As of now we only offer sca
 
 http://www.asahi-kasei.co.jp/ake-mate/pof/en/product/data-communication.html
 
+Download and unpack the file AsahiDB1000.tar.bz2 from the folder scatterfiles. The path to the scatterfiles has to be considered in the source code.
+
 C. Compiling the model and working with it
 ---------------------------------------
 

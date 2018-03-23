@@ -46,9 +46,9 @@ Download and unpack the file AsahiDB1000.tar.bz2 from the folder scatterfiles. T
 C. Compiling the model and working with it
 ---------------------------------------
 
-1. Working with the java implementation
+1. Working with the Java implementation
 
-Create a java project with your favorite IDE and add all source folders that reside under "src". In order to compile and run the java code, you need to satisfy the dependencies litsted in B.
+Create a Java project with your favorite IDE and add all source folders that reside under "src". In order to compile and run the Java code, you need to satisfy the dependencies litsted in B.
 
 The file demo/demojava.java contains an example how to use the model.
 

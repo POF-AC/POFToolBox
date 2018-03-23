@@ -475,6 +475,10 @@ public class RadialPower
 						m_strThetaPhiRange = Math.round(100.0*m_dblThetaPhiMin)/100.0 + "-" + Math.round(100.0*m_dblThetaPhiMax)/100.0; 
 					}
 					continue;
+				// lines 2 and 3 are comments
+				case 2:
+				case 3:
+					continue;
 				default:
 					break;
 				}

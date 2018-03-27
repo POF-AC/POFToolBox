@@ -34,8 +34,10 @@
     Sie sollten eine Kopie der GNU General Public License zusammen mit diesem
     Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
     
-    
-    The implementation of the function atomicAdd2 is copied from NVIDIA.
+    This software contains source code provided by NVIDIA Corporation.
+	
+    In detail the implementation of the function atomicAdd2 is provided by NVIDIA.
+
     For details see:
     http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#ixzz5AU713DUR 
 */

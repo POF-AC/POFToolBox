@@ -163,66 +163,66 @@ public class democuda
 		{
 			// load the scatterfiles
 			m1.loadScatterFiles(strPathToScatterFiles);
-			
+
 			// load the initial power distribution
 			m1.loadInitialPowerDistribution(mps, false, 0, false);
-				
+
 			// init CUDA 
 			JCudaDriver.setExceptionsEnabled(true);
 			
-		     // Initialize the driver and create a context for the first device.
-		    cuInit(0);
-		    CUdevice device = new CUdevice();
-		    cuDeviceGet(device, 0);
-		    CUcontext context = new CUcontext();
-		    cuCtxCreate(context, 0, device);
-		    
-		    // Load the ptx file.
-		    CUmodule module = new CUmodule();
-		    cuModuleLoad(module, ptxFileName);
+			// Initialize the driver and create a context for the first device.
+			cuInit(0);
+			CUdevice device = new CUdevice();
+			cuDeviceGet(device, 0);
+			CUcontext context = new CUcontext();
+			cuCtxCreate(context, 0, device);
+
+			// Load the ptx file.
+			CUmodule module = new CUmodule();
+			cuModuleLoad(module, ptxFileName);
 	
-		    // Obtain function pointers
-		    CUfunction fConstructNormTimeSlicer = new CUfunction();
-		    cuModuleGetFunction(fConstructNormTimeSlicer, module, "constuctNormTimeSlicer");
-		    
-		    CUfunction fConstructAngleHelper = new CUfunction();
-		    cuModuleGetFunction(fConstructAngleHelper, module, "constructAngleHelper");
-		    
-		    CUfunction finitMatrix = new CUfunction();
-		    cuModuleGetFunction(finitMatrix, module, "initMatrix");
-		    
-		    CUfunction fLoadScatterData = new CUfunction();
-		    cuModuleGetFunction(fLoadScatterData, module, "loadScatterData");
-		    
-		    CUfunction ftransferIRs = new CUfunction();
-		    cuModuleGetFunction(ftransferIRs, module, "transferIRs");
-		    
-		    CUfunction fprepareMatrixForReloadsA = new CUfunction();
-		    cuModuleGetFunction(fprepareMatrixForReloadsA, module, "prepareMatrixForReloadsA");
-		    
-		    CUfunction fMatrixReloadedA = new CUfunction();
-		    cuModuleGetFunction(fMatrixReloadedA, module, "MatrixReloadedA");
-		    
-		    CUfunction fprepareMatrixForReloadsB = new CUfunction();
-		    cuModuleGetFunction(fprepareMatrixForReloadsB, module, "prepareMatrixForReloadsB");
-		    
-		    CUfunction fMatrixReloadedB = new CUfunction();
-		    cuModuleGetFunction(fMatrixReloadedB, module, "MatrixReloadedB");
-		    
-		    CUfunction fprepareStepC = new CUfunction();
-		    cuModuleGetFunction(fprepareStepC, module, "prepareStepC");
-		    
-		    CUfunction fMatrixReloadedC2 = new CUfunction();
-		    cuModuleGetFunction(fMatrixReloadedC2, module, "MatrixReloadedC");
-		    
-		    CUfunction fGetMatrixData = new CUfunction();
-		    cuModuleGetFunction(fGetMatrixData, module, "GetMatrixData");
-		    
-		    CUfunction fGetDIRData = new CUfunction();
-		    cuModuleGetFunction(fGetDIRData, module, "GetDIRData");
-		    
-		    // Block1 Construct NormTimeSlicer
-		    CUdeviceptr dpNTS = new CUdeviceptr();
+			// Obtain function pointers
+			CUfunction fConstructNormTimeSlicer = new CUfunction();
+			cuModuleGetFunction(fConstructNormTimeSlicer, module, "constuctNormTimeSlicer");
+
+			CUfunction fConstructAngleHelper = new CUfunction();
+			cuModuleGetFunction(fConstructAngleHelper, module, "constructAngleHelper");
+
+			CUfunction finitMatrix = new CUfunction();
+			cuModuleGetFunction(finitMatrix, module, "initMatrix");
+
+			CUfunction fLoadScatterData = new CUfunction();
+			cuModuleGetFunction(fLoadScatterData, module, "loadScatterData");
+
+			CUfunction ftransferIRs = new CUfunction();
+			cuModuleGetFunction(ftransferIRs, module, "transferIRs");
+
+			CUfunction fprepareMatrixForReloadsA = new CUfunction();
+			cuModuleGetFunction(fprepareMatrixForReloadsA, module, "prepareMatrixForReloadsA");
+
+			CUfunction fMatrixReloadedA = new CUfunction();
+			cuModuleGetFunction(fMatrixReloadedA, module, "MatrixReloadedA");
+
+			CUfunction fprepareMatrixForReloadsB = new CUfunction();
+			cuModuleGetFunction(fprepareMatrixForReloadsB, module, "prepareMatrixForReloadsB");
+
+			CUfunction fMatrixReloadedB = new CUfunction();
+			cuModuleGetFunction(fMatrixReloadedB, module, "MatrixReloadedB");
+
+			CUfunction fprepareStepC = new CUfunction();
+			cuModuleGetFunction(fprepareStepC, module, "prepareStepC");
+
+			CUfunction fMatrixReloadedC2 = new CUfunction();
+			cuModuleGetFunction(fMatrixReloadedC2, module, "MatrixReloadedC");
+
+			CUfunction fGetMatrixData = new CUfunction();
+			cuModuleGetFunction(fGetMatrixData, module, "GetMatrixData");
+
+			CUfunction fGetDIRData = new CUfunction();
+			cuModuleGetFunction(fGetDIRData, module, "GetDIRData");
+
+			// Block1 Construct NormTimeSlicer
+			CUdeviceptr dpNTS = new CUdeviceptr();
 			MyJCudaDriver.cuMemAlloc(dpNTS, nSizeNTS, bMemoryOnHost);
 			
 			Pointer kernelParameters = Pointer.to(
@@ -267,48 +267,48 @@ public class democuda
 	        System.out.println("Construct AH: " + (nEnd-nStart)/1E9 + "s");
 			// End Block2
 	        
-	        // Block3 initMatrix
-		    CUdeviceptr dpM1 = new CUdeviceptr();
-			MyJCudaDriver.cuMemAlloc(dpM1, nSizeMatrix, bMemoryOnHost);
-			
-			CUdeviceptr dDistanceAbsolute = new CUdeviceptr();
-			MyJCudaDriver.cuMemAlloc(dDistanceAbsolute, Sizeof.DOUBLE, bMemoryOnHost);
-			cuMemcpyHtoD(dDistanceAbsolute, Pointer.to(new double[]{0}), Sizeof.DOUBLE);
-			
-			CUdeviceptr dDistanceDelta = new CUdeviceptr();
-			MyJCudaDriver.cuMemAlloc(dDistanceDelta, Sizeof.DOUBLE, bMemoryOnHost);
-			cuMemcpyHtoD(dDistanceDelta, Pointer.to(new double[]{0.16}), Sizeof.DOUBLE);
-			
-			CUdeviceptr dnOutside = new CUdeviceptr();
-			MyJCudaDriver.cuMemAlloc(dnOutside, Sizeof.DOUBLE, bMemoryOnHost);
-			cuMemcpyHtoD(dnOutside, Pointer.to(new double[]{1.0}), Sizeof.DOUBLE);
-			
-			CUdeviceptr dnInside = new CUdeviceptr();
-			MyJCudaDriver.cuMemAlloc(dnInside, Sizeof.DOUBLE, bMemoryOnHost);
-			cuMemcpyHtoD(dnInside, Pointer.to(new double[]{GlobalModelSettings.getInstance().getCoreIndex()}), Sizeof.DOUBLE);
-			
-			CUdeviceptr dTZMax = new CUdeviceptr();
-			MyJCudaDriver.cuMemAlloc(dTZMax, Sizeof.DOUBLE, bMemoryOnHost);
-			cuMemcpyHtoD(dTZMax, Pointer.to(new double[]{m1.getTZMax()}), Sizeof.DOUBLE);
-			
-			CUdeviceptr dTPMin = new CUdeviceptr();
-			MyJCudaDriver.cuMemAlloc(dTPMin, Sizeof.DOUBLE, bMemoryOnHost);
-			cuMemcpyHtoD(dTPMin, Pointer.to(new double[]{m1.getTPMin()}), Sizeof.DOUBLE);
-			
-			CUdeviceptr dTPMax = new CUdeviceptr();
-			MyJCudaDriver.cuMemAlloc(dTPMax, Sizeof.DOUBLE, bMemoryOnHost);
-			cuMemcpyHtoD(dTPMax, Pointer.to(new double[]{m1.getTPMax()}), Sizeof.DOUBLE);
-			
-			kernelParameters = Pointer.to(
-		            Pointer.to(dpM1),
-		            Pointer.to(dDistanceAbsolute),
-		            Pointer.to(dDistanceDelta),
-		            Pointer.to(dnOutside),
-		            Pointer.to(dnInside),
-		            Pointer.to(dTZMax),
-		            Pointer.to(dTPMin),
-		            Pointer.to(dTPMax)
-		        );
+		// Block3 initMatrix
+		CUdeviceptr dpM1 = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(dpM1, nSizeMatrix, bMemoryOnHost);
+
+		CUdeviceptr dDistanceAbsolute = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(dDistanceAbsolute, Sizeof.DOUBLE, bMemoryOnHost);
+		cuMemcpyHtoD(dDistanceAbsolute, Pointer.to(new double[]{0}), Sizeof.DOUBLE);
+
+		CUdeviceptr dDistanceDelta = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(dDistanceDelta, Sizeof.DOUBLE, bMemoryOnHost);
+		cuMemcpyHtoD(dDistanceDelta, Pointer.to(new double[]{0.16}), Sizeof.DOUBLE);
+
+		CUdeviceptr dnOutside = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(dnOutside, Sizeof.DOUBLE, bMemoryOnHost);
+		cuMemcpyHtoD(dnOutside, Pointer.to(new double[]{1.0}), Sizeof.DOUBLE);
+
+		CUdeviceptr dnInside = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(dnInside, Sizeof.DOUBLE, bMemoryOnHost);
+		cuMemcpyHtoD(dnInside, Pointer.to(new double[]{GlobalModelSettings.getInstance().getCoreIndex()}), Sizeof.DOUBLE);
+
+		CUdeviceptr dTZMax = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(dTZMax, Sizeof.DOUBLE, bMemoryOnHost);
+		cuMemcpyHtoD(dTZMax, Pointer.to(new double[]{m1.getTZMax()}), Sizeof.DOUBLE);
+
+		CUdeviceptr dTPMin = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(dTPMin, Sizeof.DOUBLE, bMemoryOnHost);
+		cuMemcpyHtoD(dTPMin, Pointer.to(new double[]{m1.getTPMin()}), Sizeof.DOUBLE);
+
+		CUdeviceptr dTPMax = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(dTPMax, Sizeof.DOUBLE, bMemoryOnHost);
+		cuMemcpyHtoD(dTPMax, Pointer.to(new double[]{m1.getTPMax()}), Sizeof.DOUBLE);
+
+		kernelParameters = Pointer.to(
+		    Pointer.to(dpM1),
+		    Pointer.to(dDistanceAbsolute),
+		    Pointer.to(dDistanceDelta),
+		    Pointer.to(dnOutside),
+		    Pointer.to(dnInside),
+		    Pointer.to(dTZMax),
+		    Pointer.to(dTPMin),
+		    Pointer.to(dTPMax)
+		);
 	
 	        // Call the kernel function.
 	        blockSizeX = 32;
@@ -330,18 +330,18 @@ public class democuda
 	        
 	        
 	        // Block4 loadScatterData
-	        CUdeviceptr dinTZ = new CUdeviceptr();
-	 	   	MyJCudaDriver.cuMemAlloc(dinTZ, 1 * Sizeof.INT, bMemoryOnHost);
-	 	   	   
-	 	   
-	 	   	CUdeviceptr dinTP = new CUdeviceptr();
-	 	   	MyJCudaDriver.cuMemAlloc(dinTP, 1 * Sizeof.INT, bMemoryOnHost);
-	 	   
-	 	   	CUdeviceptr diSD = new CUdeviceptr();
-	 	   	MyJCudaDriver.cuMemAlloc(diSD, 851 * Sizeof.DOUBLE, bMemoryOnHost);
-	 	   	
-	 	    CUdeviceptr dTZInside = new CUdeviceptr();
-		   	MyJCudaDriver.cuMemAlloc(dTZInside, Sizeof.DOUBLE, bMemoryOnHost); 
+		CUdeviceptr dinTZ = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(dinTZ, 1 * Sizeof.INT, bMemoryOnHost);
+
+
+		CUdeviceptr dinTP = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(dinTP, 1 * Sizeof.INT, bMemoryOnHost);
+
+		CUdeviceptr diSD = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(diSD, 851 * Sizeof.DOUBLE, bMemoryOnHost);
+
+		CUdeviceptr dTZInside = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(dTZInside, Sizeof.DOUBLE, bMemoryOnHost); 
 	
 	        // Call the kernel function.
 	        blockSizeX = 851;
@@ -430,12 +430,12 @@ public class democuda
 		            Pointer.to(dpAH)
 		        );
 	
-	        // Call the kernel function.
-			blockSizeX = 8;
-		    blockSizeY = 8;
-		        
-		    gridSizeX = 128;
-		    gridSizeY = 16;
+		// Call the kernel function.
+		blockSizeX = 8;
+		blockSizeY = 8;
+
+		gridSizeX = 128;
+		gridSizeY = 16;
 	        
 	        nStart = System.nanoTime();
 	        cuLaunchKernel(fMatrixReloadedA,
@@ -484,224 +484,224 @@ public class democuda
 		   	// Block8 MatrixReloadedC
 	        
 	        // Call the kernel function.
-	        blockSizeX = 1;
-		    blockSizeY = 32;
-		        
-		    gridSizeX = 1;
-		    gridSizeY = 32;
-		    
-		    CUdeviceptr nTZ = new CUdeviceptr();
-		   	MyJCudaDriver.cuMemAlloc(nTZ, Sizeof.INT, bMemoryOnHost);
-		   	
-		   	CUdeviceptr nTP = new CUdeviceptr();
-		   	MyJCudaDriver.cuMemAlloc(nTP, Sizeof.INT, bMemoryOnHost);
-		   	
-		   	kernelParameters = Pointer.to(
-		            Pointer.to(dpM1),
-		            Pointer.to(dpM2),
-		            Pointer.to(dpNTS),
-		            Pointer.to(dpAH),
-		            Pointer.to(nTZ),
-		            Pointer.to(nTP),
-		            Pointer.to(dpStepTimes),
-		            Pointer.to(dpStepWidth)
-		        );
+		blockSizeX = 1;
+		blockSizeY = 32;
+
+		gridSizeX = 1;
+		gridSizeY = 32;
+
+		CUdeviceptr nTZ = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(nTZ, Sizeof.INT, bMemoryOnHost);
+
+		CUdeviceptr nTP = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(nTP, Sizeof.INT, bMemoryOnHost);
+
+		kernelParameters = Pointer.to(
+		    Pointer.to(dpM1),
+		    Pointer.to(dpM2),
+		    Pointer.to(dpNTS),
+		    Pointer.to(dpAH),
+		    Pointer.to(nTZ),
+		    Pointer.to(nTP),
+		    Pointer.to(dpStepTimes),
+		    Pointer.to(dpStepWidth)
+		);
 	       
-		    for(int i = 0; i < 851; i++)
-		    {
-		    	for(int j = 0; j < 98; j++)
-		
-		    	{
-		    		int nTZn[] = new int[]{i};
-		            cuMemcpyHtoD(nTZ,Pointer.to(nTZn), Sizeof.INT);
-		            
-		            int nTPn[] = new int[]{j};
-		            cuMemcpyHtoD(nTP,Pointer.to(nTPn), Sizeof.INT);
-		            
-		    		kernelParameters = Pointer.to(
-				            Pointer.to(dpM1),
-				            Pointer.to(dpM2),
-				            Pointer.to(dpNTS),
-				            Pointer.to(dpAH),
-				            Pointer.to(nTZ),
-				            Pointer.to(nTP),
-				            
-				            Pointer.to(dpStepTimes),
-				            Pointer.to(dpStepWidth));
-				            
-			        cuLaunchKernel(fMatrixReloadedC2,
-			        		gridSizeX,  gridSizeY, 1,      // Grid dimension
-			                blockSizeX, blockSizeY, 1,      // Block dimension
-			            0, null,               // Shared memory size and stream
-			            kernelParameters, null // Kernel- and extra parameters
-			        );
-			        cuCtxSynchronize();
-			       
-			    }
-		    }
-		    nEnd = System.nanoTime();
-	        System.out.println("Matrix ReloadedC: " + (nEnd-nStart)/1E9 + "s");
-			// End MatrixReloadedC
+		for(int i = 0; i < 851; i++)
+		{
+			for(int j = 0; j < 98; j++)
+
+			{
+				int nTZn[] = new int[]{i};
+				cuMemcpyHtoD(nTZ,Pointer.to(nTZn), Sizeof.INT);
+
+				int nTPn[] = new int[]{j};
+				cuMemcpyHtoD(nTP,Pointer.to(nTPn), Sizeof.INT);
+
+				kernelParameters = Pointer.to(
+					    Pointer.to(dpM1),
+					    Pointer.to(dpM2),
+					    Pointer.to(dpNTS),
+					    Pointer.to(dpAH),
+					    Pointer.to(nTZ),
+					    Pointer.to(nTP),
+
+					    Pointer.to(dpStepTimes),
+					    Pointer.to(dpStepWidth));
+
+				cuLaunchKernel(fMatrixReloadedC2,
+						gridSizeX,  gridSizeY, 1,      // Grid dimension
+					blockSizeX, blockSizeY, 1,      // Block dimension
+				    0, null,               // Shared memory size and stream
+				    kernelParameters, null // Kernel- and extra parameters
+				);
+				cuCtxSynchronize();
+
+			}
+		}
+		nEnd = System.nanoTime();
+		System.out.println("Matrix ReloadedC: " + (nEnd-nStart)/1E9 + "s");
+		// End MatrixReloadedC
 	        
 	        // Additional runs
 	        for(int nRuns = 0; nRuns < nCycles-1; nRuns++)
 	        {
-		        // Reload Matrix!!!        
-		        CUdeviceptr ftemp = dpM1;
-		        dpM1 = dpM2;
-		        dpM2 = ftemp;
-		        
-		    	CUdeviceptr dpMinTime = new CUdeviceptr();
-			   	MyJCudaDriver.cuMemAlloc(dpMinTime, Sizeof.DOUBLE, bMemoryOnHost);
-			   	
-			   	CUdeviceptr dpMaxTime = new CUdeviceptr();
-			   	MyJCudaDriver.cuMemAlloc(dpMaxTime, Sizeof.DOUBLE, bMemoryOnHost);
+			// Reload Matrix!!!        
+			CUdeviceptr ftemp = dpM1;
+			dpM1 = dpM2;
+			dpM2 = ftemp;
 
-			   	// Block sw1 PrepareMatrixForReload
-		        kernelParameters = Pointer.to(
-			            Pointer.to(dpM2),
-			            Pointer.to(dpMinTime),
-			            Pointer.to(dpMaxTime)
-			        );
-		        
-		        // Call the kernel function.
-		        blockSizeX = 1;
+			CUdeviceptr dpMinTime = new CUdeviceptr();
+				MyJCudaDriver.cuMemAlloc(dpMinTime, Sizeof.DOUBLE, bMemoryOnHost);
+
+				CUdeviceptr dpMaxTime = new CUdeviceptr();
+				MyJCudaDriver.cuMemAlloc(dpMaxTime, Sizeof.DOUBLE, bMemoryOnHost);
+
+				// Block sw1 PrepareMatrixForReload
+			kernelParameters = Pointer.to(
+				    Pointer.to(dpM2),
+				    Pointer.to(dpMinTime),
+				    Pointer.to(dpMaxTime)
+				);
+
+			// Call the kernel function.
+			blockSizeX = 1;
 			    blockSizeY = 1;
-			        
+
 			    gridSizeX = 1;
 			    gridSizeY = 1;
-		        
-		        cuLaunchKernel(fprepareMatrixForReloadsA,
-		            gridSizeX,  gridSizeY, 1,      // Grid dimension
-		            blockSizeX, blockSizeY, 1,      // Block dimension
-		            0, null,               // Shared memory size and stream
-		            kernelParameters, null // Kernel- and extra parameters
-		        );
-		        cuCtxSynchronize();
-		
-		        // Call the kernel function.
-		        blockSizeX = 8;
+
+			cuLaunchKernel(fprepareMatrixForReloadsA,
+			    gridSizeX,  gridSizeY, 1,      // Grid dimension
+			    blockSizeX, blockSizeY, 1,      // Block dimension
+			    0, null,               // Shared memory size and stream
+			    kernelParameters, null // Kernel- and extra parameters
+			);
+			cuCtxSynchronize();
+
+			// Call the kernel function.
+			blockSizeX = 8;
 			    blockSizeY = 16;
-			        
+
 			    gridSizeX = 128;
 			    gridSizeY = 8;
-		        nStart = System.nanoTime();
-		        cuLaunchKernel(fprepareMatrixForReloadsB,
-		            gridSizeX,  gridSizeY, 1,      // Grid dimension
-		            blockSizeX, blockSizeY, 1,      // Block dimension
-		            0, null,               // Shared memory size and stream
-		            kernelParameters, null // Kernel- and extra parameters
-		        );
-		        cuCtxSynchronize();
-		        System.out.println("Matrix Reloaded again half"+ (nEnd-nStart)/1E9 + "s");
-		        
-		        nStart = System.nanoTime();
-		        
-		        // Block 8 a
-		        nStart = System.nanoTime();
-			   	
-		        kernelParameters = Pointer.to(
-			            Pointer.to(dpM1),
-			            Pointer.to(dpNTS),
-			            Pointer.to(dpStepTimes),
-			            Pointer.to(dpStepWidth)
-			        );
-	
-		        // Call the kernel function.
-		        blockSizeX = 8;
+			nStart = System.nanoTime();
+			cuLaunchKernel(fprepareMatrixForReloadsB,
+			    gridSizeX,  gridSizeY, 1,      // Grid dimension
+			    blockSizeX, blockSizeY, 1,      // Block dimension
+			    0, null,               // Shared memory size and stream
+			    kernelParameters, null // Kernel- and extra parameters
+			);
+			cuCtxSynchronize();
+			System.out.println("Matrix Reloaded again half"+ (nEnd-nStart)/1E9 + "s");
+
+			nStart = System.nanoTime();
+
+			// Block 8 a
+			nStart = System.nanoTime();
+
+			kernelParameters = Pointer.to(
+				    Pointer.to(dpM1),
+				    Pointer.to(dpNTS),
+				    Pointer.to(dpStepTimes),
+				    Pointer.to(dpStepWidth)
+				);
+
+			// Call the kernel function.
+			blockSizeX = 8;
 			    blockSizeY = 1;
-			        
+
 			    gridSizeX =  128;
 			    gridSizeY = 1;
-		        nStart = System.nanoTime();
-		        cuLaunchKernel(fprepareStepC,
-		        		gridSizeX,  gridSizeY, 1,      // Grid dimension
-		                blockSizeX, blockSizeY, 1,      // Block dimension
-		            0, null,               // Shared memory size and stream
-		            kernelParameters, null // Kernel- and extra parameters
-		        );
-		        cuCtxSynchronize();
-		        nEnd = System.nanoTime();
-		        System.out.println("Matrix prepare C: " + (nEnd-nStart)/1E9 + "s");
-		        // End Block 8 a
+			nStart = System.nanoTime();
+			cuLaunchKernel(fprepareStepC,
+					gridSizeX,  gridSizeY, 1,      // Grid dimension
+				blockSizeX, blockSizeY, 1,      // Block dimension
+			    0, null,               // Shared memory size and stream
+			    kernelParameters, null // Kernel- and extra parameters
+			);
+			cuCtxSynchronize();
+			nEnd = System.nanoTime();
+			System.out.println("Matrix prepare C: " + (nEnd-nStart)/1E9 + "s");
+			// End Block 8 a
 
 				// End sw1
-		        // Block8 MatrixReloadedC
-		        
+			// Block8 MatrixReloadedC
+
 			    nStart = System.nanoTime();   
-		
-		        // Call the kernel function.
-		        blockSizeX = 8;
+
+			// Call the kernel function.
+			blockSizeX = 8;
 			    blockSizeY = 8;
-			        
+
 			    gridSizeX = 107;
 			    gridSizeY = 107;
-		       
+
 			    for(int i = 0; i < 851; i++)
 			    {
-			    	for(int j = 0; j < 98; j++)
-			    	{
-			    		int nTZn[] = new int[]{i};
-			            cuMemcpyHtoD(nTZ,Pointer.to(nTZn), Sizeof.INT);
-			            
-			            int nTPn[] = new int[]{j};
-			            cuMemcpyHtoD(nTP,Pointer.to(nTPn), Sizeof.INT);
-			            
-			    		kernelParameters = Pointer.to(
-					            Pointer.to(dpM1),
-					            Pointer.to(dpM2),
-					            Pointer.to(dpNTS),
-					            Pointer.to(dpAH),
-					            Pointer.to(nTZ),
-					            Pointer.to(nTP),
-					            
-					            Pointer.to(dpStepTimes),
-					            Pointer.to(dpStepWidth));
-					            
-				        cuLaunchKernel(fMatrixReloadedC2,
-				        		gridSizeX,  gridSizeY, 1,      // Grid dimension
-				                blockSizeX, blockSizeY, 1,      // Block dimension
-				            0, null,               // Shared memory size and stream
-				            kernelParameters, null // Kernel- and extra parameters
-				        );
+				for(int j = 0; j < 98; j++)
+				{
+					int nTZn[] = new int[]{i};
+				    cuMemcpyHtoD(nTZ,Pointer.to(nTZn), Sizeof.INT);
+
+				    int nTPn[] = new int[]{j};
+				    cuMemcpyHtoD(nTP,Pointer.to(nTPn), Sizeof.INT);
+
+					kernelParameters = Pointer.to(
+						    Pointer.to(dpM1),
+						    Pointer.to(dpM2),
+						    Pointer.to(dpNTS),
+						    Pointer.to(dpAH),
+						    Pointer.to(nTZ),
+						    Pointer.to(nTP),
+
+						    Pointer.to(dpStepTimes),
+						    Pointer.to(dpStepWidth));
+
+					cuLaunchKernel(fMatrixReloadedC2,
+							gridSizeX,  gridSizeY, 1,      // Grid dimension
+						blockSizeX, blockSizeY, 1,      // Block dimension
+					    0, null,               // Shared memory size and stream
+					    kernelParameters, null // Kernel- and extra parameters
+					);
 				    }
 			    }
-			    
+
 			    cuCtxSynchronize();
-	        
-		        nEnd = System.nanoTime();
-		        System.out.println("Matrix Reloaded again: " + (nEnd-nStart)/1E9 + "s");
+
+			nEnd = System.nanoTime();
+			System.out.println("Matrix Reloaded again: " + (nEnd-nStart)/1E9 + "s");
 				// End MatrixReloadedC
 	        }
 	        
 	                
 	        // Block9 GetBackMatrixData
 	        CUdeviceptr dnTPMaxIndex = new CUdeviceptr();
-		   	MyJCudaDriver.cuMemAlloc(dnTPMaxIndex, Sizeof.INT, bMemoryOnHost);
-		   	
-		   	CUdeviceptr ddblTPMax = new CUdeviceptr();
-		   	MyJCudaDriver.cuMemAlloc(ddblTPMax, Sizeof.DOUBLE, bMemoryOnHost);
-		   	
-		   	CUdeviceptr ddblTPMin = new CUdeviceptr();
-		   	MyJCudaDriver.cuMemAlloc(ddblTPMin, Sizeof.DOUBLE, bMemoryOnHost);
-		   	
-		   	CUdeviceptr dnTZMaxIndex = new CUdeviceptr();
-		   	MyJCudaDriver.cuMemAlloc(dnTZMaxIndex, Sizeof.INT, bMemoryOnHost);
-		   	
-		   	CUdeviceptr ddblTZMax = new CUdeviceptr();
-		   	MyJCudaDriver.cuMemAlloc(ddblTZMax, Sizeof.DOUBLE, bMemoryOnHost);
-		   	
-		   	CUdeviceptr ddblDistanceAbs = new CUdeviceptr();
-		   	MyJCudaDriver.cuMemAlloc(ddblDistanceAbs, Sizeof.DOUBLE, bMemoryOnHost);
-		   	
-		   	CUdeviceptr ddblDistanceDelta = new CUdeviceptr();
-		   	MyJCudaDriver.cuMemAlloc(ddblDistanceDelta, Sizeof.DOUBLE, bMemoryOnHost);
-		   	
-		   	CUdeviceptr ddblCoreIndex = new CUdeviceptr();
-		   	MyJCudaDriver.cuMemAlloc(ddblCoreIndex, Sizeof.DOUBLE, bMemoryOnHost);
-		   	
-		   	CUdeviceptr ddblSurroundIndex = new CUdeviceptr();
-		   	MyJCudaDriver.cuMemAlloc(ddblSurroundIndex, Sizeof.DOUBLE, bMemoryOnHost);
+		MyJCudaDriver.cuMemAlloc(dnTPMaxIndex, Sizeof.INT, bMemoryOnHost);
+
+		CUdeviceptr ddblTPMax = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(ddblTPMax, Sizeof.DOUBLE, bMemoryOnHost);
+
+		CUdeviceptr ddblTPMin = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(ddblTPMin, Sizeof.DOUBLE, bMemoryOnHost);
+
+		CUdeviceptr dnTZMaxIndex = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(dnTZMaxIndex, Sizeof.INT, bMemoryOnHost);
+
+		CUdeviceptr ddblTZMax = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(ddblTZMax, Sizeof.DOUBLE, bMemoryOnHost);
+
+		CUdeviceptr ddblDistanceAbs = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(ddblDistanceAbs, Sizeof.DOUBLE, bMemoryOnHost);
+
+		CUdeviceptr ddblDistanceDelta = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(ddblDistanceDelta, Sizeof.DOUBLE, bMemoryOnHost);
+
+		CUdeviceptr ddblCoreIndex = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(ddblCoreIndex, Sizeof.DOUBLE, bMemoryOnHost);
+
+		CUdeviceptr ddblSurroundIndex = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(ddblSurroundIndex, Sizeof.DOUBLE, bMemoryOnHost);
 
 	        kernelParameters = Pointer.to(
 	        		Pointer.to(dpM2),
@@ -776,27 +776,27 @@ public class democuda
 	        
 	        // Block10 GetDIRs
 	        CUdeviceptr dnTZIndex = new CUdeviceptr();
-		   	MyJCudaDriver.cuMemAlloc(dnTZIndex, Sizeof.INT, bMemoryOnHost);
-		   	
-		   	CUdeviceptr dnTPIndex = new CUdeviceptr();
-		   	MyJCudaDriver.cuMemAlloc(dnTPIndex, Sizeof.INT, bMemoryOnHost);
-		   	
-		   	CUdeviceptr dnSteps = new CUdeviceptr();
-		   	MyJCudaDriver.cuMemAlloc(dnSteps, Sizeof.INT, bMemoryOnHost);
-		   	
-		   	CUdeviceptr ddblMinTime = new CUdeviceptr();
-		   	MyJCudaDriver.cuMemAlloc(ddblMinTime, Sizeof.DOUBLE, bMemoryOnHost);
-		   	
-		   	CUdeviceptr ddblMaxTime = new CUdeviceptr();
-		   	MyJCudaDriver.cuMemAlloc(ddblMaxTime, Sizeof.DOUBLE, bMemoryOnHost);
-		   	
-		   	CUdeviceptr ddblPower = new CUdeviceptr();
-		   	MyJCudaDriver.cuMemAlloc(ddblPower, 98*851*nSAMPLES_IR*Sizeof.DOUBLE, bMemoryOnHost);
-		   	
-		   	nStart = System.nanoTime();
-		  
-   			cuMemcpyHtoD(dnTZIndex, Pointer.to(new int[]{0}), Sizeof.INT);
-   			cuMemcpyHtoD(dnTPIndex, Pointer.to(new int[]{0}), Sizeof.INT);
+		MyJCudaDriver.cuMemAlloc(dnTZIndex, Sizeof.INT, bMemoryOnHost);
+
+		CUdeviceptr dnTPIndex = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(dnTPIndex, Sizeof.INT, bMemoryOnHost);
+
+		CUdeviceptr dnSteps = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(dnSteps, Sizeof.INT, bMemoryOnHost);
+
+		CUdeviceptr ddblMinTime = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(ddblMinTime, Sizeof.DOUBLE, bMemoryOnHost);
+
+		CUdeviceptr ddblMaxTime = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(ddblMaxTime, Sizeof.DOUBLE, bMemoryOnHost);
+
+		CUdeviceptr ddblPower = new CUdeviceptr();
+		MyJCudaDriver.cuMemAlloc(ddblPower, 98*851*nSAMPLES_IR*Sizeof.DOUBLE, bMemoryOnHost);
+
+		nStart = System.nanoTime();
+
+		cuMemcpyHtoD(dnTZIndex, Pointer.to(new int[]{0}), Sizeof.INT);
+		cuMemcpyHtoD(dnTPIndex, Pointer.to(new int[]{0}), Sizeof.INT);
    			
 	        kernelParameters = Pointer.to(
 	        		Pointer.to(dpM2),
@@ -851,9 +851,7 @@ public class democuda
 	        }
         
 	        nEnd = System.nanoTime();
-	        
-	        
-	        
+
 	        System.out.println("GetDIRData: " + (nEnd-nStart)/1E9 + "s");
 	        // End GetDIRs
 	        
@@ -863,43 +861,43 @@ public class democuda
 	        dir.createSpikedFile(strPathToResults,"iacudaSpiked.txt");
 	        
 	        // release allocated memory
-			MyJCudaDriver.cuMemFree(dpNTS, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(dpAH, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(dpM1, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(dpM2, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(dDistanceAbsolute, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(dDistanceDelta, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(dnOutside, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(dnInside, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(dTZMax, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(dTPMin, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(dTPMax, bMemoryOnHost);
-	        
-	        
-			MyJCudaDriver.cuMemFree(dinTZ, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(dinTP, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(diSD, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(dTZInside, bMemoryOnHost);
-	        
-			MyJCudaDriver.cuMemFree(dZeroValue, bMemoryOnHost);
-	        
-	        
-			MyJCudaDriver.cuMemFree(dnTPMaxIndex, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(ddblTPMax, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(ddblTPMin, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(dnTZMaxIndex, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(ddblTZMax, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(ddblDistanceAbs, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(ddblDistanceDelta, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(ddblCoreIndex, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(ddblSurroundIndex, bMemoryOnHost);
-	        
-			MyJCudaDriver.cuMemFree(dnTZIndex, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(dnTPIndex, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(dnSteps, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(ddblMinTime, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(ddblMaxTime, bMemoryOnHost);
-			MyJCudaDriver.cuMemFree(ddblPower, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(dpNTS, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(dpAH, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(dpM1, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(dpM2, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(dDistanceAbsolute, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(dDistanceDelta, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(dnOutside, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(dnInside, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(dTZMax, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(dTPMin, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(dTPMax, bMemoryOnHost);
+
+
+		MyJCudaDriver.cuMemFree(dinTZ, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(dinTP, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(diSD, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(dTZInside, bMemoryOnHost);
+
+		MyJCudaDriver.cuMemFree(dZeroValue, bMemoryOnHost);
+
+
+		MyJCudaDriver.cuMemFree(dnTPMaxIndex, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(ddblTPMax, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(ddblTPMin, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(dnTZMaxIndex, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(ddblTZMax, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(ddblDistanceAbs, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(ddblDistanceDelta, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(ddblCoreIndex, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(ddblSurroundIndex, bMemoryOnHost);
+
+		MyJCudaDriver.cuMemFree(dnTZIndex, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(dnTPIndex, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(dnSteps, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(ddblMinTime, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(ddblMaxTime, bMemoryOnHost);
+		MyJCudaDriver.cuMemFree(ddblPower, bMemoryOnHost);
 	        
 	        
 	        System.exit(0);
